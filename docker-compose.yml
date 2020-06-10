@@ -1,0 +1,56 @@
+version: '3.7'
+
+services:
+  rabbitmq:
+    image: rabbitmq:latest
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=blbackend
+      - POSTGRES_USER=blbackend
+      - POSTGRES_PASSWORD=blbackend
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data/
+
+  memcached:
+    container_name: memcached
+    image: memcached:latest
+
+  web:
+    build: ./
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - 8000:8000
+    environment:
+      - DJANGO_SETTINGS_MODULE=blbackend.settings.local_settings
+      - SECRET_KEY=23g34jh2g34hg2j4
+    depends_on:
+      - rabbitmq
+      - db
+      - memcached
+    links:
+      - memcached
+      - db
+
+  celery:
+    build: ./
+    entrypoint: ./docker-celery-entrypoint.sh
+    volumes:
+      - ./:/usr/src/app/
+    environment:
+      - DJANGO_SETTINGS_MODULE=blbackend.settings.local_settings
+      - SECRET_KEY=23g34jh2g34hg2j4
+    depends_on:
+      - web
+      - rabbitmq
+      - db
+    links:
+      - memcached
+      - rabbitmq
+      - db
+
+volumes:
+  postgres_data:

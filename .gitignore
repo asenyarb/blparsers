@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# Development environment
+.idea/
+
+# PG Data
+postgres_data/
+
+# Static data
+static/
