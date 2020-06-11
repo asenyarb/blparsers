@@ -20,7 +20,7 @@ def process_response_data(data, community_domain):
     time_two_weeks_ago = timezone.now() - timedelta(days=14)
 
     for post in data['items']:
-        text = post['text']
+        text = post['text'].replace("\n", "")
 
         if post['marked_as_ads']:
             continue
@@ -34,6 +34,7 @@ def process_response_data(data, community_domain):
                     text
                 )
             )
+            phone_numbers = list(map(lambda x: x.strip(), phone_numbers))
             date = datetime.utcfromtimestamp(int(post['date'])).astimezone(timezone.get_current_timezone())
             vk_post_id = post['id']
             link = community_domain + "?w=wall{}_{}".format(
