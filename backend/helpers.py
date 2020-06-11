@@ -30,7 +30,7 @@ def process_response_data(data, community_domain):
         if any(map(lambda word: l_text.find(word) != -1, keywords)):
             phone_numbers = list(
                 re.finditer(
-                    r'(((\+375|8|80)[-\s]?)?(%s)[-\s]?)?([0-9][-\s]?){7}' % parsers_config.operators_codes,
+                    r'(((\+375|8|80)[-\s]?)?(%s)[-\s]?)?([0-9][-\s]?){7}' % parsers_config.operators_codes.join("|"),
                     text
                 )
             )
