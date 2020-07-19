@@ -11,7 +11,7 @@ CELERY_ENABLE_UTC = True
 beat_schedule = {
     'parse-every-10-second-%s' % domain: {
         'task': 'backend.tasks.VKWorkOffersImporter',
-        'schedule': 10,
+        'schedule': 100,
         'args': (domain, )
     } for domain in parsers_config.vk_id_by_domain.keys()
 }

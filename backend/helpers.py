@@ -30,11 +30,11 @@ def process_response_data(data, community_domain):
         if any(map(lambda word: l_text.find(word) != -1, keywords)):
             phone_numbers = list(
                 re.finditer(
-                    r'(((\+375|8|80)[-\s]?)?(%s)[-\s]?)?([0-9][-\s]?){7}' % parsers_config.operators_codes.join("|"),
+                    r'(((\+375|8|80)[-\s]?)?(%s)[-\s]?)?([0-9][-\s]?){7}' % "|".join(parsers_config.operators_codes),
                     text
                 )
             )
-            phone_numbers = list(map(lambda x: x.strip(), phone_numbers))
+            phone_numbers = [x.group().strip() for x in phone_numbers]
             date = datetime.utcfromtimestamp(int(post['date'])).astimezone(timezone.get_current_timezone())
             vk_post_id = post['id']
             link = community_domain + "?w=wall{}_{}".format(
@@ -56,7 +56,7 @@ def process_response_data(data, community_domain):
                     created_date=date
                 )
                 for number in phone_numbers:
-                    PhoneNumber.objects.create(post=post, number=number.group())
+                    PhoneNumber.objects.create(post=post, number=number)
 
     return should_continue
 

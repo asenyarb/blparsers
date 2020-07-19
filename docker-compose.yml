@@ -19,14 +19,16 @@ services:
 
   web:
     build: ./
-    command: python manage.py runserver 0.0.0.0:8000
+    entrypoint: ./entrypoints/web-entrypoint.sh
     volumes:
       - ./:/usr/src/app/
     ports:
       - 8000:8000
     environment:
+      - POSTGRES_DB=blbackend
+      - POSTGRES_USER=blbackend
+      - POSTGRES_PASSWORD=blbackend
       - DJANGO_SETTINGS_MODULE=blbackend.settings.local_settings
-      - SECRET_KEY=23g34jh2g34hg2j4
     depends_on:
       - rabbitmq
       - db
@@ -37,12 +39,14 @@ services:
 
   celery:
     build: ./
-    entrypoint: ./docker-celery-entrypoint.sh
+    entrypoint: ./entrypoints/celery-entrypoint.sh
     volumes:
       - ./:/usr/src/app/
     environment:
+      - POSTGRES_DB=blbackend
+      - POSTGRES_USER=blbackend
+      - POSTGRES_PASSWORD=blbackend
       - DJANGO_SETTINGS_MODULE=blbackend.settings.local_settings
-      - SECRET_KEY=23g34jh2g34hg2j4
     depends_on:
       - web
       - rabbitmq
