@@ -19,7 +19,7 @@ services:
 
   web:
     build: ./
-    entrypoint: ./entrypoints/web-entrypoint.sh
+    entrypoint: ./docker-startup/web-entrypoint.sh
     volumes:
       - ./:/usr/src/app/
     ports:
@@ -39,7 +39,7 @@ services:
 
   celery:
     build: ./
-    entrypoint: ./entrypoints/celery-entrypoint.sh
+    entrypoint: ./docker-startup/celery-entrypoint.sh
     volumes:
       - ./:/usr/src/app/
     environment:
