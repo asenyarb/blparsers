@@ -57,26 +57,5 @@ services:
       - rabbitmq
       - db
 
-  flower:
-    build: ./
-    entrypoint: ./docker-startup/celery-entrypoint2.sh
-    volumes:
-      - ./:/usr/src/app/
-    ports:
-      - 5555:5555
-    environment:
-      - POSTGRES_DB=blbackend
-      - POSTGRES_USER=blbackend
-      - POSTGRES_PASSWORD=blbackend
-      - DJANGO_SETTINGS_MODULE=blbackend.settings.local_settings
-    depends_on:
-      - web
-      - rabbitmq
-      - db
-    links:
-      - memcached
-      - rabbitmq
-      - db
-
 volumes:
   postgres_data:
