@@ -4,7 +4,7 @@ from celery.five import monotonic
 from contextlib import contextmanager
 from django.core.cache import cache
 from hashlib import md5
-from backend.helpers import parse_vk_community
+from parsers.vkparser.parser import VKParser
 
 
 LOCK_EXPIRE = 60 * 10  # Lock expires in 10 minutes
@@ -29,6 +29,8 @@ def memcache_lock(lock_id, oid):
 
 
 class VKWorkOffersImporter(Task):
+    name = "parse.vk"
+
     def run(self, domain, **kwargs):
         logger = self.get_logger(**kwargs)
 
@@ -37,7 +39,7 @@ class VKWorkOffersImporter(Task):
         logger.warning('Importing feed: %s', domain)
         with memcache_lock(lock_id, self.app.oid) as acquired:
             if acquired:
-                parse_vk_community(domain, logger)
+                VKParser.parse_vk_community(domain, logger)
                 logger.warning("Parsed community %s" % domain)
                 return
         logger.warning('Feed %s is already being imported by another worker', domain)

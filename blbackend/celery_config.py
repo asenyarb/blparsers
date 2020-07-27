@@ -1,8 +1,8 @@
-from backend import parsers_config
+from parsers.vkparser import parser_config
 
 broker_url = 'amqp://guest:guest@rabbitmq:5672//'
 backend = "rpc://"
-include = ['backend.tasks']
+include = ['parsers.tasks', 'telegram.tasks']
 
 timezone = 'UTC'
 CELERY_ENABLE_UTC = True
@@ -10,8 +10,12 @@ CELERY_ENABLE_UTC = True
 
 beat_schedule = {
     'parse-every-10-second-%s' % domain: {
-        'task': 'backend.tasks.VKWorkOffersImporter',
-        'schedule': 100,
-        'args': (domain, )
-    } for domain in parsers_config.vk_id_by_domain.keys()
+        'task': 'parse.vk',
+        'schedule': 600,
+        'args': (domain, ),
+    } for domain in parser_config.vk_id_by_domain.keys()
+}
+
+task_routes = {
+    'telegram.tasks.TelegramSenderManager': {'queue': 'telegram_channel'},
 }
